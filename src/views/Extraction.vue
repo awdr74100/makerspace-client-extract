@@ -110,15 +110,11 @@ export default {
 
         const { access_token: accessToken } = this.$route.query;
 
-        try {
-          await this.$store.dispatch('oauth/getUserInfo', { accessToken });
+        await this.$store.dispatch('oauth/getUserInfo', { accessToken });
 
-          if (!this.user.email.includes('@stust.edu.tw')) {
-            this.$toast.warning('目前暫不開放給外部人員註冊');
-            this.anonymous = true;
-          }
-        } catch (error) {
-          this.$toast.error(error.message);
+        if (!this.user.email.includes('@stust.edu.tw')) {
+          this.$toast.warning('目前暫不開放給外部人員註冊');
+          this.anonymous = true;
         }
       }
 
@@ -129,6 +125,7 @@ export default {
       const overlay = document.querySelector('.overlay');
 
       const createCanvas = faceapi.createCanvasFromMedia(webcam);
+
       createCanvas.classList.add('canvas', 'position-absolute');
       const createCanvasSize = {
         width: webcam.clientWidth,
@@ -207,32 +204,28 @@ export default {
         if (i !== imageLength - 1) await delay(500);
       }
 
-      try {
-        const features = await Promise.all(
-          base64Array.map((base64) => {
-            const img = document.createElement('img');
-            img.src = base64;
-            return faceapi
-              .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
-              .withFaceLandmarks(true)
-              .withFaceDescriptor();
-          }),
-        );
+      const features = await Promise.all(
+        base64Array.map((base64) => {
+          const img = document.createElement('img');
+          img.src = base64;
+          return faceapi
+            .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks(true)
+            .withFaceDescriptor();
+        }),
+      );
 
-        if (features.includes(undefined)) {
-          vm.spinner = false;
-          this.$toast.error('特徵提取失敗，請在試一次');
-          return;
-        }
-
-        vm.$store.commit('SET_FEATURES', { features });
-
+      if (features.includes(undefined)) {
         vm.spinner = false;
-
-        this.$store.commit('modal/OPEN_MODAL', { modal: 'postModal' });
-      } catch (error) {
-        this.$toast.error(error.message);
+        this.$toast.error('特徵提取失敗，請在試一次');
+        return;
       }
+
+      vm.$store.commit('SET_FEATURES', { features });
+
+      vm.spinner = false;
+
+      this.$store.commit('modal/OPEN_MODAL', { modal: 'postModal' });
     },
   },
 };

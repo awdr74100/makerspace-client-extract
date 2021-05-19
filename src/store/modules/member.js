@@ -4,17 +4,15 @@ export default {
   namespaced: true,
   actions: {
     async createMember(context, { id, name, email, features }) {
-      try {
-        const url = `${import.meta.env.VITE_APP_BACKEND_URL}/api/members`;
-        const payload = {
-          oauthId: id,
-          name,
-          email,
-          features: features.map((feature) =>
-            JSON.stringify(feature.descriptor),
-          ),
-        };
+      const url = `${import.meta.env.VITE_APP_BACKEND_URL}/api/members`;
+      const payload = {
+        oauthId: id,
+        name,
+        email,
+        features: features.map(({ descriptor }) => JSON.stringify(descriptor)),
+      };
 
+      try {
         const { data } = await axios.post(url, payload);
 
         if (!data.success) {
