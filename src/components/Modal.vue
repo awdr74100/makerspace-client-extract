@@ -56,7 +56,7 @@
             <label for="userSoundId" class="form-label">聲音識別碼</label>
             <input
               id="userSoundId"
-              value="系統自動分配"
+              value="自動分配"
               type="text"
               disabled
               class="form-control"

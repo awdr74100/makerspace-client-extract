@@ -51,9 +51,13 @@
           @click.prevent="onCapture"
         >
           <span>提取特徵</span>
-          <span v-if="spinner" class="text-white ms-3">
-            <font-awesome-icon :icon="['fas', 'spinner']" spin />
-          </span>
+          <div
+            v-if="spinner"
+            class="spinner-border spinner-border-sm text-white ms-2"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
         </button>
       </div>
     </div>
